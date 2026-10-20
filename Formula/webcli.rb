@@ -62,7 +62,15 @@ class Webcli < Formula
   end
 
   def install
-    virtualenv_install_with_resources
+    venv = virtualenv_create(libexec, "python3.13")
+    # Playwright ships only platform wheels (no sdist); install everything else from source,
+    # then install the vendored Playwright wheel directly (Homebrew's resource helper forces
+    # --no-binary :all:, which cannot install a wheel).
+    venv.pip_install resources.reject { |r| r.name == "playwright" }
+    resource("playwright").stage do
+      system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--no-index", Dir["*.whl"].first
+    end
+    venv.pip_install_and_link buildpath
   end
 
   def caveats
