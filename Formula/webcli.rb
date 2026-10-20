@@ -14,6 +14,23 @@ class Webcli < Formula
 
   depends_on "python@3.13"
 
+  # Playwright has no sdist on PyPI; vendor the arch-specific macOS wheel (its node driver is
+  # bundled in the wheel, native per arch so `brew audit` stays happy, and no network is needed).
+  on_macos do
+    on_arm do
+      resource "playwright" do
+        url "https://files.pythonhosted.org/packages/b4/b3/99f6c07a7f59adb3830e42cda2e2093dc1c2cbd1f69fe4393ead30c88257/playwright-1.64.0-py3-none-macosx_11_0_arm64.whl"
+        sha256 "8de42430e9a7c8b04ec963856d484d36ffd452882318ebad2df3e6fb49a8197a"
+      end
+    end
+    on_intel do
+      resource "playwright" do
+        url "https://files.pythonhosted.org/packages/cc/b7/24e5c283694e7a63aa376ddde395031decd7d627c77b34a58953176e8a19/playwright-1.64.0-py3-none-macosx_10_13_x86_64.whl"
+        sha256 "d76a501c9930b5a097b00e2448cda2200122a1e8e4be762ff535c1b076277737"
+      end
+    end
+  end
+
   resource "click" do
     url "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz"
     sha256 "ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34"
@@ -52,23 +69,6 @@ class Webcli < Formula
   resource "typing-extensions" do
     url "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz"
     sha256 "dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5"
-  end
-
-  # Playwright has no sdist on PyPI; vendor the arch-specific macOS wheel (its node driver is
-  # bundled in the wheel, native per arch so `brew audit` stays happy, and no network is needed).
-  on_macos do
-    on_arm do
-      resource "playwright" do
-        url "https://files.pythonhosted.org/packages/b4/b3/99f6c07a7f59adb3830e42cda2e2093dc1c2cbd1f69fe4393ead30c88257/playwright-1.64.0-py3-none-macosx_11_0_arm64.whl"
-        sha256 "8de42430e9a7c8b04ec963856d484d36ffd452882318ebad2df3e6fb49a8197a"
-      end
-    end
-    on_intel do
-      resource "playwright" do
-        url "https://files.pythonhosted.org/packages/cc/b7/24e5c283694e7a63aa376ddde395031decd7d627c77b34a58953176e8a19/playwright-1.64.0-py3-none-macosx_10_13_x86_64.whl"
-        sha256 "d76a501c9930b5a097b00e2448cda2200122a1e8e4be762ff535c1b076277737"
-      end
-    end
   end
 
   def install
